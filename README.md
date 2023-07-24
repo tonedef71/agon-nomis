@@ -25,5 +25,5 @@ There are four levels of difficulty:
 * NOMIS must be run from the exact folder where the `nomis.hi` file resides in order for the saved best score to be read-in by the game.
 
 ## Demo Playthrough
-
+https://github.com/tonedef71/agon-nomis/assets/3978924/4d8dd15b-6c95-47c7-8b17-6cbd326683a1
 
