@@ -100,9 +100,9 @@
 10990 Sequence%(i%) = -1:REM Signal end of sequence with terminating value of -1
 11000 ENDPROC
 11010 :
-11020 REM :::::::::::::::::::::::::
-11030 REM ::  Draw Playing Field ::
-11040 REM :::::::::::::::::::::::::
+11020 REM ::::::::::::::::::::::::
+11030 REM :: Draw Playing Field ::
+11040 REM ::::::::::::::::::::::::
 11050 DEF PROC_DRAW_PLAYING_FIELD
 11060 LOCAL i%, ox%, oy%
 11070 FOR i% = 0 TO 3
@@ -161,9 +161,9 @@
 11600 DifficultyLevel% = r%
 11610 ENDPROC
 11620 :
-11630 REM ::::::::::::::::::::::::
-11640 REM ::   Display Scores   ::
-11650 REM ::::::::::::::::::::::::
+11630 REM ::::::::::::::::::::::
+11640 REM ::  Display Scores  ::
+11650 REM ::::::::::::::::::::::
 11660 DEF PROC_DISPLAY_SCORES(currentRound%)
 11670 LOCAL sc$
 11680 sc$ = CHR$(17)+CHR$(CYAN)+"ROUND "+CHR$(17)+CHR$(WHITE)+STR$(currentRound% + 1)+"/"+STR$(NumRounds%)
@@ -181,9 +181,9 @@
 11800 PRINT TAB(CW% - LEN(hs$) + 4, 0)hs$
 11810 ENDPROC
 11820 :
-11830 REM :::::::::::::::::::::::::
-11840 REM ::   High Score Read   ::
-11850 REM :::::::::::::::::::::::::
+11830 REM :::::::::::::::::::::::
+11840 REM ::  High Score Read  ::
+11850 REM :::::::::::::::::::::::
 11860 DEF PROC_HISCORE_READ(game$)
 11870 LOCAL f0%, status%, val%
 11880 status% = 0
@@ -193,9 +193,9 @@
 11920 IF status% = 0 THEN BestScore% = val1%:BestRounds% = val2%
 11930 ENDPROC
 11940 :
-11950 REM :::::::::::::::::::::::::
-11960 REM ::   High Score Write  ::
-11970 REM :::::::::::::::::::::::::
+11950 REM ::::::::::::::::::::::::
+11960 REM ::  High Score Write  ::
+11970 REM ::::::::::::::::::::::::
 11980 DEF PROC_HISCORE_WRITE(game$)
 11990 LOCAL f0%
 12000 f0% = OPENOUT(game$ + ".HI")
@@ -243,9 +243,9 @@
 12420 PROC_HISCORE_WRITE(GameName$)
 12430 ENDPROC
 12440 :
-12450 REM :::::::::::::::::::::::
-12460 REM :: Play Another Game ::
-12470 REM :::::::::::::::::::::::
+12450 REM ::::::::::::::::::::::::::::::
+12460 REM :: Play Another Game Prompt ::
+12470 REM ::::::::::::::::::::::::::::::
 12480 DEF FN_PLAY_AGAIN
 12490 LOCAL message$, r$
 12500 message$ = "Play Again? (Y/N)"
@@ -253,9 +253,9 @@
 12520 REPEAT r$ = FN_PROMPT(FN_CENTER(message$), CH% DIV 2 + 6, message$, "") UNTIL INSTR("YN", r$) <> 0
 12530 = r$
 12540 :
-12550 REM :::::::::::::::::
-12560 REM :: Say Goodbye ::
-12570 REM :::::::::::::::::
+12550 REM :::::::::::::::::::
+12560 REM ::  Say Goodbye  ::
+12570 REM :::::::::::::::::::
 12580 DEF PROC_GOODBYE(game$)
 12590 PROC_HIDE_CURSOR
 12600 CLS:PROC_FULL_CENTER_TEXT("So long and thank you for playing...")
@@ -264,9 +264,9 @@
 12630 PROC_SHOW_CURSOR
 12640 ENDPROC
 12650 :
-12660 REM :::::::::::::::::::
-12670 REM ::  CHARGE!!!!!  ::
-12680 REM :::::::::::::::::::
+12660 REM :::::::::::::::::
+12670 REM ::  CHARGE!!!  ::
+12680 REM :::::::::::::::::
 12690 DEF PROC_CHARGE
 12700 PROC_PLAY("129001149001165001177004165002177008"):REM PITCH,DURATION
 12710 ENDPROC
@@ -300,29 +300,29 @@
 12990 REM ::::::::::::::::::::::
 13000 DEF FN_MIN(x, y):= y + (x < y) * (y - x)
 13010 :
-13020 REM :::::::::::::::::::::::::::
-13030 REM ::   Bounded time ticks  ::
-13040 REM :::::::::::::::::::::::::::
+13020 REM ::::::::::::::::::::::::::
+13030 REM ::  Bounded time ticks  ::
+13040 REM ::::::::::::::::::::::::::
 13050 DEF FN_INT_TIME:= TIME MOD MAXINT%
 13060 :
-13070 REM :::::::::::::::::::::::
-13080 REM :: Has time reached  ::
-13090 REM :: target seconds?   ::
-13100 REM :::::::::::::::::::::::
+13070 REM ::::::::::::::::::::::
+13080 REM :: Has time reached ::
+13090 REM :: target seconds?  ::
+13100 REM ::::::::::::::::::::::
 13110 DEF FN_IS_TIME(sec%, prevSec%, targetSec%):= (sec% MOD targetSec% = 0 AND sec% <> prevSec%)
 13120 :
-13130 REM ::::::::::::::::::::::
-13140 REM :: Retrieve a byte  ::
-13150 REM :: register value   ::
-13160 REM :: from VDP         ::
-13170 REM ::::::::::::::::::::::
+13130 REM :::::::::::::::::::::
+13140 REM :: Retrieve a byte ::
+13150 REM :: register value  ::
+13160 REM :: from VDP        ::
+13170 REM :::::::::::::::::::::
 13180 DEF FN_getByteVDP(var%):A% = &A0:L% = var%:= USR(&FFF4)
 13190 :
 13200 REM ::::::::::::::::::::::
-13210 REM :: Retrieve a word  ::
-13220 REM :: register value   ::
-13230 REM :: from VDP         ::
-13240 REM ::::::::::::::::::::::
+13210 REM :: Retrieve a word ::
+13220 REM :: register value  ::
+13230 REM :: from VDP        ::
+13240 REM :::::::::::::::::::::
 13250 DEF FN_getWordVDP(var%):= FN_getByteVDP(var%) + 256 * FN_getByteVDP(var% + 1)
 13260 :
 13270 REM ::::::::::::::::::::::
@@ -332,10 +332,10 @@
 13310 REM ::::::::::::::::::::::
 13320 DEF FN_COLORCOUNT:= FN_getByteVDP(&15)
 13330 :
-13340 REM ::::::::::::::::::::::
-13350 REM :: Retrieve the     ::
-13360 REM :: ASCII key code   ::
-13370 REM :: reported by VDP  ::
+13340 REM :::::::::::::::::::::
+13350 REM :: Retrieve the    ::
+13360 REM :: ASCII key code  ::
+13370 REM :: reported by VDP ::
 13380 REM ::::::::::::::::::::::
 13390 DEF FN_ASCII_KEYCODE:= FN_getByteVDP(&05)
 13400 :
@@ -352,10 +352,10 @@
 13510 REM :::::::::::::::::::::::::::::
 13520 DEF FN_ASCII_KEYCOUNT:= FN_getByteVDP(&19)
 13530 :
-13540 REM :::::::::::::::::::::::::::::::::
-13550 REM :: Retrieve a keypress within  ::
-13560 REM :: the given timeout value     ::
-13570 REM :::::::::::::::::::::::::::::::::
+13540 REM ::::::::::::::::::::::::::::::::
+13550 REM :: Retrieve a keypress within ::
+13560 REM :: the given timeout value    ::
+13570 REM ::::::::::::::::::::::::::::::::
 13580 DEF FN_GET_KEY(timeout%)
 13590 LOCAL i%, keycount%, r%, sync%
 13600 r% = -1
@@ -394,10 +394,10 @@
 13930 REM ::::::::::::::::::::::::::::
 13940 DEF PROC_HIDE_CURSOR:VDU 23,1,0;0;0;0;:ENDPROC
 13950 :
-13960 REM ::::::::::::::::::::::::::::
-13970 REM :: Enable display of the  ::
-13980 REM :: cursor on the screen   ::
-13990 REM ::::::::::::::::::::::::::::
+13960 REM :::::::::::::::::::::::::::
+13970 REM :: Enable display of the ::
+13980 REM :: cursor on the screen  ::
+13990 REM :::::::::::::::::::::::::::
 14000 DEF PROC_SHOW_CURSOR:VDU 23,1,1;0;0;0;:ENDPROC
 14010 :
 14020 REM :::::::::::::::::::::::::
