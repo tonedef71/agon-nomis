@@ -1,4 +1,5 @@
-# agon-nomis
+# agon-nomis ![nomis_icon](https://github.com/tonedef71/agon-nomis/assets/3978924/18a23763-fa54-40e9-8d44-6b062499622d)
+
 NOMIS: a clone of the classic game [*Simon*](https://en.wikipedia.org/wiki/Simon_(game)) written in [BBC BASIC v3](https://en.wikipedia.org/wiki/BBC_BASIC)
 * A colorful, musical game of ["Follow the Leader"](https://en.wikipedia.org/wiki/Follow_the_leader_(game))
 * Won first place in the [1st Olimex AgonLight Weekend Programming Challenge 2023](https://olimex.wordpress.com/2023/04/21/agonlight-weekend-programming-challenge-issue-1/)
