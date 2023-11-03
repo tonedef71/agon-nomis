@@ -2,7 +2,7 @@
 10010 REM :: NOMIS FOR AgonLight (BBC BASIC v3)      ::
 10020 REM :: NOMIS Only May Impersonate Simon        ::
 10030 REM :::::::::::::::::::::::::::::::::::::::::::::
-10040 REM :: 20230723: V1.1 - Improvements           ::
+10040 REM :: 20231103: V1.2 - Use new VDP MODEs      ::
 10050 REM :::::::::::::::::::::::::::::::::::::::::::::
 10060 REM :: This game won first place in the Olimex ::
 10070 REM :: Weekend Programming Challenge Issue #1  ::
@@ -12,8 +12,8 @@
 10110 REM :::::::::::::::::::::::::::::::::::::::::::::
 10120 CLEAR
 10130 REPEAT CLS:SY$=FN_TO_UPPER(FN_PROMPT(0,0,"TARGET (A)gon or (B)BC B-SDL:","A")):UNTIL SY$ = "A" OR SY$ = "B"
-10140 IF SY$ = "B" THEN PDLY% = 350:SDLY% = 20:MO% = 9:ELSE PDLY% = 125:SDLY% = 13:MO% = 2
-10150 IF SY$ = "A" THEN REPEAT CLS:MO$=FN_PROMPT(0,0,"MODE (1,2,3,...):",STR$(MO%)):UNTIL VAL(MO$) > 0:MO% = VAL(MO$)
+10140 IF SY$ = "B" THEN PDLY% = 350:SDLY% = 20:MO% = 9:ELSE PDLY% = 125:SDLY% = 13:MO% = 13
+10150 IF SY$ = "A" THEN REPEAT CLS:MO$=FN_PROMPT_FOR_NUMBERS(0,0,"MODE (0,3,4,8,9,12,13,...):",STR$(MO%),3):UNTIL VAL(MO$) > 0:MO% = VAL(MO$)
 10160 MODE MO%
 10170 PROC_SETUP
 10180 ON ERROR PROC_HANDLE_ERROR:REM Handle ESC key
@@ -409,67 +409,83 @@
 14080 r$ = GET$:r$ = FN_TO_UPPER(r$):IF r$ = CHR$(13) THEN r$ = default$
 14090 := r$
 14100 :
-14110 REM :::::::::::::::::::::::::::
-14120 REM :: Empty Keyboard Buffer ::
-14130 REM :::::::::::::::::::::::::::
-14140 DEF PROC_EMPTY_KEYBOARD_BUFFER
-14150 REPEAT UNTIL INKEY(0) = -1
-14160 ENDPROC
-14170 :
-14180 REM :::::::::::::::::::::::::::::
-14190 REM ::  Display Centered Text  ::
-14200 REM :::::::::::::::::::::::::::::
-14210 DEF PROC_CENTER(text$)
-14220 LOCAL i%, n%, l%
-14230 l% = 0
-14240 FOR i% = 1 TO LEN(text$)
-14250   IF ASC(MID$(text$, i%, 1)) >= BLANK THEN l% = l% + 1
-14260 NEXT i%
-14270 n% = FN_CENTER(STRING$(l%, CHR$(BLANK)))
-14280 i% = VPOS:VDU 31, n%, i%
-14290 FOR i% = 1 TO LEN(text$)
-14300   VDU ASC(MID$(text$, i%, 1))
-14310 NEXT i%
+14110 REM :::::::::::::::::::::::::::::::::
+14120 REM :: Enter numbers from keyboard ::
+14130 REM :::::::::::::::::::::::::::::::::
+14140 DEF FN_PROMPT_FOR_NUMBERS(x%, y%, text$, default$, length%)
+14150 LOCAL c$, r$
+14160 r$ = "":PROC_EMPTY_KEYBOARD_BUFFER:PROC_SHOW_CURSOR
+14170 PRINT TAB(x%, y%)text$;" ";default$:PRINT TAB(x% + LEN(text$) + 1, y%);
+14180 REPEAT
+14190   c$ = GET$
+14200   IF ((c$ = CHR$(127) OR c$ = CHR$(8)) AND LEN(r$) > 0) THEN r$ = LEFT$(r$, LEN(r$) - 1):PRINT CHR$(127);
+14210   IF (c$ >= "0" AND c$ <= "9") AND LEN(r$) < length% THEN r$ = r$ + c$:PRINT c$;
+14220   IF c$ = CHR$(13) AND LEN(r$) = 0 THEN r$ = default$
+14230 UNTIL (c$ = CHR$(13) AND LEN(r$) <= length%)
+14240 PROC_HIDE_CURSOR
+14250 :=r$
+14260 :
+14270 REM :::::::::::::::::::::::::::
+14280 REM :: Empty Keyboard Buffer ::
+14290 REM :::::::::::::::::::::::::::
+14300 DEF PROC_EMPTY_KEYBOARD_BUFFER
+14310 REPEAT UNTIL INKEY(0) = -1
 14320 ENDPROC
 14330 :
-14340 REM :::::::::::::::::::::::::::::::::
-14350 REM :: Center text both vertically ::
-14360 REM :: and horizontally            ::
-14370 REM :::::::::::::::::::::::::::::::::
-14380 DEF PROC_FULL_CENTER_TEXT(text$):VDU 31,FN_CENTER(text$), CH% DIV 2:PRINT text$;:ENDPROC
-14390 :
-14400 REM ::::::::::::::::::::::::::::
-14410 REM :: Restore Default Colors ::
-14420 REM ::::::::::::::::::::::::::::
-14430 DEF PROC_DEFAULT_COLORS
-14440 COLOUR 128+BLACK:COLOUR WHITE
-14450 ENDPROC
-14460 :
-14470 REM :::::::::::::::::::::::
-14480 REM :: Play Simple Sound ::
-14490 REM :::::::::::::::::::::::
-14500 DEF PROC_SOUND(channel%, tone%, duration%)
-14510 IF channel% < 0 OR channel% > 2 THEN channel% = 1
-14520 SOUND channel%, -12, tone%, duration%
-14530 SOUND channel%, 0, tone%, 1:REM Stacatto the currently playing sound
-14540 ENDPROC
+14340 REM :::::::::::::::::::::::::::::
+14350 REM ::  Display Centered Text  ::
+14360 REM :::::::::::::::::::::::::::::
+14370 DEF PROC_CENTER(text$)
+14380 LOCAL i%, n%, l%
+14390 l% = 0
+14400 FOR i% = 1 TO LEN(text$)
+14410   IF ASC(MID$(text$, i%, 1)) >= BLANK THEN l% = l% + 1
+14420 NEXT i%
+14430 n% = FN_CENTER(STRING$(l%, CHR$(BLANK)))
+14440 i% = VPOS:VDU 31, n%, i%
+14450 FOR i% = 1 TO LEN(text$)
+14460   VDU ASC(MID$(text$, i%, 1))
+14470 NEXT i%
+14480 ENDPROC
+14490 :
+14500 REM :::::::::::::::::::::::::::::::::
+14510 REM :: Center text both vertically ::
+14520 REM :: and horizontally            ::
+14530 REM :::::::::::::::::::::::::::::::::
+14540 DEF PROC_FULL_CENTER_TEXT(text$):VDU 31,FN_CENTER(text$), CH% DIV 2:PRINT text$;:ENDPROC
 14550 :
-14560 REM :::::::::::::::::::::::::
-14570 REM :: Play Musical Phrase ::
-14580 REM :::::::::::::::::::::::::
-14590 DEF PROC_PLAY(notes$)
-14600 LOCAL d%, j%, l%, p%
-14610 l% = LEN(notes$) DIV 3
-14620 FOR j% = 1 TO l% STEP 2
-14630   p% = VAL(MID$(notes$, 3 * (j% - 1) + 1, 3)):d% = VAL(MID$(notes$, 3 * (j% - 1) + 4, 3))
-14640   IF p% >= 0 THEN SOUND 1, -10, p%, d%:ELSE SOUND 1, 0, 0, d%
-14650   SOUND 1, 0, p%, 1:REM Stacatto the currently playing sound
-14660 NEXT j%
-14670 ENDPROC
-14680 :
-14690 REM ::::::::::::::::::::::::::::::
-14700 REM ::  Error Handling Routine  ::
-14710 REM ::::::::::::::::::::::::::::::
-14720 DEF PROC_HANDLE_ERROR
-14730 IF ERR <> 17 THEN PROC_DEFAULT_COLORS:PROC_SHOW_CURSOR:PRINT:REPORT:PRINT" @line #";ERL:STOP
-14740 ENDPROC
+14560 REM ::::::::::::::::::::::::::::
+14570 REM :: Restore Default Colors ::
+14580 REM ::::::::::::::::::::::::::::
+14590 DEF PROC_DEFAULT_COLORS
+14600 COLOUR 128+BLACK:COLOUR WHITE
+14610 ENDPROC
+14620 :
+14630 REM :::::::::::::::::::::::
+14640 REM :: Play Simple Sound ::
+14650 REM :::::::::::::::::::::::
+14660 DEF PROC_SOUND(channel%, tone%, duration%)
+14670 IF channel% < 0 OR channel% > 2 THEN channel% = 1
+14680 SOUND channel%, -12, tone%, duration%
+14690 SOUND channel%, 0, tone%, 1:REM Stacatto the currently playing sound
+14700 ENDPROC
+14710 :
+14720 REM :::::::::::::::::::::::::
+14730 REM :: Play Musical Phrase ::
+14740 REM :::::::::::::::::::::::::
+14750 DEF PROC_PLAY(notes$)
+14760 LOCAL d%, j%, l%, p%
+14770 l% = LEN(notes$) DIV 3
+14780 FOR j% = 1 TO l% STEP 2
+14790   p% = VAL(MID$(notes$, 3 * (j% - 1) + 1, 3)):d% = VAL(MID$(notes$, 3 * (j% - 1) + 4, 3))
+14800   IF p% >= 0 THEN SOUND 1, -10, p%, d%:ELSE SOUND 1, 0, 0, d%
+14810   SOUND 1, 0, p%, 1:REM Stacatto the currently playing sound
+14820 NEXT j%
+14830 ENDPROC
+14840 :
+14850 REM ::::::::::::::::::::::::::::::
+14860 REM ::  Error Handling Routine  ::
+14870 REM ::::::::::::::::::::::::::::::
+14880 DEF PROC_HANDLE_ERROR
+14890 IF ERR <> 17 THEN PROC_DEFAULT_COLORS:PROC_SHOW_CURSOR:PRINT:REPORT:PRINT" @line #";ERL:STOP
+14900 ENDPROC
