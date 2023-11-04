@@ -2,7 +2,7 @@
 10010 REM :: NOMIS FOR AgonLight (BBC BASIC v3)      ::
 10020 REM :: NOMIS Only May Impersonate Simon        ::
 10030 REM :::::::::::::::::::::::::::::::::::::::::::::
-10040 REM :: 20231103: V1.2 - Use new VDP MODEs      ::
+10040 REM :: 20231103: V1.2.1 - Use new VDP MODEs    ::
 10050 REM :::::::::::::::::::::::::::::::::::::::::::::
 10060 REM :: This game won first place in the Olimex ::
 10070 REM :: Weekend Programming Challenge Issue #1  ::
@@ -13,7 +13,7 @@
 10120 CLEAR
 10130 REPEAT CLS:SY$=FN_TO_UPPER(FN_PROMPT(0,0,"TARGET (A)gon or (B)BC B-SDL:","A")):UNTIL SY$ = "A" OR SY$ = "B"
 10140 IF SY$ = "B" THEN PDLY% = 350:SDLY% = 20:MO% = 9:ELSE PDLY% = 125:SDLY% = 13:MO% = 13
-10150 IF SY$ = "A" THEN REPEAT CLS:MO$=FN_PROMPT_FOR_NUMBERS(0,0,"MODE (0,3,4,8,9,12,13,...):",STR$(MO%),3):UNTIL VAL(MO$) > 0:MO% = VAL(MO$)
+10150 IF SY$ = "A" THEN REPEAT CLS:MO$=FN_PROMPT_FOR_NUMBERS(0,0,"MODE (0,3,4,8,9,12,13,...):",STR$(MO%),3):UNTIL VAL(MO$) >= 0:MO% = VAL(MO$)
 10160 MODE MO%
 10170 PROC_SETUP
 10180 ON ERROR PROC_HANDLE_ERROR:REM Handle ESC key
@@ -35,7 +35,7 @@
 10340 MAXINT% = &3B9AC9FF:GameName$ = "NOMIS":MaxLevel% = 4:BestScore% = 6:BestRounds% = 8
 10350 BLACK = 0:RED = 1:GREEN = 2:YELLOW = 3:BLUE = 4:MAGENTA = 5:CYAN = 6:WHITE = 7:BLANK = 32:LIT = 32:UNLIT = 35
 10360 DIM DIFFICULTY_LEVELS(MaxLevel%), Sequence%(32), LIT_PAD$(4, 2), UNLIT_PAD$(4, 2), PAD%(4, 2), PAD_COLOR%(4), PAD_PITCH%(4), PAD_KEY$(4)
-10370 IF SY$ = "A" THEN CW% = FN_getByteVDP(&13):CH% = FN_getByteVDP(&14):ELSE CW% = 40:CH% = 24
+10370 IF SY$ = "A" THEN CW% = FN_MIN(FN_getByteVDP(&13), 40):CH% = FN_MIN(FN_getByteVDP(&14), 24):ELSE CW% = 40:CH% = 24
 10380 RESTORE:FOR i% = 0 TO 3:READ DIFFICULTY_LEVELS(i%):NEXT i%
 10390 DATA 8,14,20,31
 10400 FOR i% = 0 TO 3
@@ -381,7 +381,7 @@
 13800 REM :::::::::::::::::::::
 13810 REM ::   Center text   ::
 13820 REM :::::::::::::::::::::
-13830 DEF FN_CENTER(text$):= (CW% - LEN(text$)) DIV 2 + 1
+13830 DEF FN_CENTER(text$):= (CW% - LEN(text$)) DIV 2
 13840 :
 13850 REM :::::::::::::::::::::::::::::::::::
 13860 REM :: Display Text In Reverse Video ::
